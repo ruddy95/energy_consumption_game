@@ -15,17 +15,36 @@ class MyPage(Page):
             return ['production']
 
     def vars_for_template(self):
-        p, q = divmod(self.subsession.round_number-1, 6) # calc
+        round_idx = self.subsession.round_number-1
+        p, q = divmod(round_idx, Constants.num_times)
 
-        time_span = 24 // 6 # calc
+        time_zones = [
+            dict(
+                start_time=(24//Constants.num_times)*t,
+                end_time=(24//Constants.num_times)*(t+1)-1
+            ) for t in range(Constants.num_times)
+        ]
 
         return dict(
             date=p+1,
-            start_time=q*time_span,
-            end_time=(q+1)*time_span-1,
+            **time_zones[q],
             penalty_for_producer=Constants.penalty * 3,
             weather_forecast=self.session.vars['weather_forecast'][p][q] * 3,
-            forecast_list=[dict(start_time=(q+1+idx)*time_span,end_time=(q+2+idx)*time_span-1,value=x) for idx, x in enumerate(self.session.vars['weather_forecast'][p][q+1:])]
+            forecast_list=[
+                dict(
+                    date=p+1 if q+1+idx < Constants.num_times else p+2,
+                    **time_zones[(q+1+idx)%Constants.num_times],
+                    value=x
+                ) for
+                    idx,
+                    x
+                in enumerate(
+                    self.session.vars['weather_forecast'].reshape([1, -1])[0][round_idx+1:min([
+                        round_idx+4,
+                        Constants.num_rounds
+                    ])]
+                )
+            ]
         )
 
 

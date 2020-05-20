@@ -24,8 +24,10 @@ doc = """
 class Constants(BaseConstants):
     name_in_url = 'energy_consumption'
     players_per_group = 4
-    num_rounds = 12 # calc
+    num_rounds = 2 # calc
 
+    num_days = 1 # calc
+    num_times = 2 # calc
     amplifier = 2
     penalty = c(70)
     regression_cost = 2
@@ -33,15 +35,16 @@ class Constants(BaseConstants):
     cpp_cost_per_unit = 1
     cpp_criteria = 85
 
-    weather = [
-        [25,27,30,28,27,26],
-        [25,27,30,28,27,26]
+    weather = [ # calc
+        [25,27]
+        # [25,27,30,28,27,26],
+        # [25,27,30,28,27,26]
     ]
 
 
 class Subsession(BaseSubsession):
     def creating_session(self):
-        error = np.round(np.random.randn(1,6)) # calc
+        error = np.round(np.random.randn(Constants.num_days, Constants.num_times))
         self.session.vars['weather_forecast'] = np.array(Constants.weather) + error
 
         for p in self.get_players():
@@ -51,11 +54,11 @@ class Subsession(BaseSubsession):
                 p.participant.vars['payoff'] = c(4000)
 
     def get_weather(self):
-        p, q = divmod(self.round_number-1, 6) # calc
+        p, q = divmod(self.round_number-1, Constants.num_times)
         return c(Constants.weather[p][q])
 
     def get_weather_forecast(self):
-        p, q = divmod(self.round_number-1, 6) # calc
+        p, q = divmod(self.round_number-1, Constants.num_times)
         return c(self.session.vars['weather_forecast'][p][q])
 
 

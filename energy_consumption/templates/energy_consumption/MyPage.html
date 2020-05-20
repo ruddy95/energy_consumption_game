@@ -32,17 +32,31 @@
             <li>停電が発生した場合、入力したQによるポイント消費は行われません。</li>
             <li>2ラウンド目以降、1つ前のラウンドからQを減少させる場合、ポイントを{{ Constants.regression_cost }}消費します。</li>
         </ul>
-        <p>第{{ date }}日目の後の時間の気温予測は以下です。</p>
+        {% if forecast_list|length > 0 %}
+        <p>このターンの後の時間の気温予測は以下です。</p>
         <ul>
-            <table class="table-condensed" style="width:500px; margin-top:20px;">
+            <table class="table-condensed" style="width:300px; margin-top:20px;">
                 {% for forecast in forecast_list %}
-                    <tr>
-                        <td>{{ forecast.start_time }}時から{{ forecast.end_time }}時まで</td>
-                        <td>{{ forecast.value }}</td>
-                    </tr>
+                <tr>
+                    <td>第{{ forecast.date }}日目</td>
+                    <td>{{ forecast.start_time }}時から{{ forecast.end_time }}時まで</td>
+                    <td>{{ forecast.value }}</td>
+                </tr>
                 {% endfor %}
             </table>
         </ul>
+        <p>予想の誤差は正規分布に従います。</p>
+        <ul>
+            <li>±3の範囲に収束する確率は約38%</li>
+            <li>±6の範囲に収束する確率は約68%</li>
+            <li>±9の範囲に収束する確率は約87%</li>
+            <li>±12の範囲に収束する確率は約95%</li>
+            <li>±15の範囲に収束する確率は約99%</li>
+            <li>...</li>
+        </ul>
+        {% else %}
+        <p>このラウンドで前半の日程が終了です。</p>
+        {% endif %}
         <p>生産する電力量を入力してください。</p>
     {% else %}
         <p>第{{ date }}日目、{{ start_time }}時から{{ end_time }}時までの予想される電力総消費量は{{ weather_forecast }}です。</p>

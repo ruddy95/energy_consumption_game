@@ -32,7 +32,7 @@ SESSION_CONFIGS = [
     dict(
         name='energy_consumption',
         num_demo_participants=4,
-        app_sequence=['intro', 'energy_consumption', 'energy_consumption_with_cpp', 'payment_info']
+        app_sequence=['intro', 'energy_consumption', 'intro2', 'energy_consumption_with_cpp', 'payment_info']
     )
 ]
 
