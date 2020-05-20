@@ -1,0 +1,42 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block title %}
+    {{ player.role() == 'Consumer' ? '消費量の決定 | 消費者ページ' : '生産量の決定 | 生産者ページ' }}
+{% endblock %}
+
+{% block content %}
+
+    {% if player.role() == 'Consumer' %}
+        <p>必要な電力量（以下Pとします）は{{ Constants.get_weather() }}です。</p>
+        <p>実際に使用する電力量は下のフォームで入力します。以下この値をQとします。<p>
+        <p>ポイントに関する諸ルールは以下になります。</p>
+        <ul>
+            <li>P＞Qの場合、ポイント減少はPとQの差に{{ Constants.amplifier }}をかけた値、とQの和になります。</li>
+            <li>P≦Qの場合、ポイント減少はQのみとなります。</li>
+            <li>消費者のQの合計が生産量を上回った場合、停電が発生しポイントが{{ Constants.penalty }}減少します。</li>
+            <li>停電が発生した場合、入力したQによるポイント消費は行われません。</li>
+            <li>2ラウンド目以降、1つ前のラウンドからQを減少させる場合、ポイントを{{ Constants.regression_cost }}消費します。</li>
+        </ul>
+
+        {% formfield player.consumption label="消費する電力量を入力してください" %}
+    {% else %}
+        <p>予想される電力総消費量は{{ Constants.get_weather_forecat() }}です。</p>
+        <p>予想の誤差は正規分布に従います。</p>
+        <ul>
+            <li>±1の範囲に収束する確率は約38%</li>
+            <li>±2の範囲に収束する確率は約68%</li>
+            <li>±3の範囲に収束する確率は約87%</li>
+            <li>±4の範囲に収束する確率は約95%</li>
+            <li>±5の範囲に収束する確率は約99%</li>
+            <li>...</li>
+        <ul>
+        <p>需要が電力総生産量を上回った場合、停電が発生しポイントが{{ Constants.penalty * 3 }}減少します。</p>
+        <p>電力量1を生産するのにポイントを1消費します。</p>
+
+        {% formfield player.production label="生産する電力量を入力してください" %}
+    {% endif %}
+
+    {% next_button %}
+
+{% endblock %}

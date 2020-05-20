@@ -1,0 +1,18 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block title %}
+    Page title
+{% endblock %}
+
+{% block content %}
+
+    {% if player.role() == 'Consumer' %}
+        <p>予想される電力消費量は{{  }}です。誤差が正負1の範囲に収束する確率は</p>
+    {% else %}
+
+    {% endif %}
+
+    {% next_button %}
+
+{% endblock %}

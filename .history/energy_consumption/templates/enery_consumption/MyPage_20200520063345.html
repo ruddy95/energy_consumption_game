@@ -1,0 +1,30 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block title %}
+    Page title
+{% endblock %}
+
+{% block content %}
+
+    {% if player.role() == 'Consumer' %}
+    {% else %}
+        <p>予想される電力総消費量は{{ Constants.get_weather_forecat() }}です。</p>
+        <p>誤差は正規分布に従います。</p>
+        <ul>
+            <li>±1の範囲に収束する確率は約38%</li>
+            <li>±2の範囲に収束する確率は約68%</li>
+            <li>±3の範囲に収束する確率は約87%</li>
+            <li>±4の範囲に収束する確率は約95%</li>
+            <li>±5の範囲に収束する確率は約99%</li>
+            <li>...</li>
+        <ul>
+        <p>需要が電力総生産量を上回った場合、停電が発生しポイントが{{ Constants.reputation_penalty }}減少します。</p>
+        <p>電力量1を生産するのにポイントを1消費します。</p>
+
+        {% formfield player.production label="生産する電力量を入力してください" %}
+    {% endif %}
+
+    {% next_button %}
+
+{% endblock %}

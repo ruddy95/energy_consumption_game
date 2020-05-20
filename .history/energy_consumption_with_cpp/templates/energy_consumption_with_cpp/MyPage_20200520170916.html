@@ -1,0 +1,66 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block title %}
+    {% if player.role == 'Consumer' %}消費量の決定 | 消費者{% else %}生産量の決定 | 生産者{% endif %}
+{% endblock %}
+
+{% block content %}
+
+    <h3>
+        第{{ date }}日目　{{ start_time }}時から{{ end_time }}時まで
+    </h3>
+
+    {% if player.role == 'Consumer' %}
+        <p>第{{ date }}日目、{{ start_time }}時から{{ end_time }}時までの気温は{{ subsession.get_weather }}です。</p>
+        {% if is_cpp_active %}
+        <p><strong>CPP発動中(電力単位料金：{{ Constants.cpp_cost_per_unit }})</strong></p>
+        {% endif %}
+        <p>気温に応じて電力を消費しなければポイントが減少します。</p>
+        <p>気温に1をかけた値以上の電力を消費するとポイントの減少を防げます。以下この値をPとします。</p>
+        {% if Constants.cpp_cost_per_unit > 1 %}
+        <p>※ただし予想電気使用量が{{ Constants.criteria }}を超える時間帯については、気温に{{ Constants.cpp_cost_per_unit }}を乗じた値以上の電力を消費しなければポイントの減少を防げません。</p>
+        {% endif %}
+        <p>実際に使用する電力量は下のフォームで入力します。以下この値をQとします。<p>
+        <p>電力を1消費するとポイントが1減少します。</p>
+        <p>ポイントに関する諸ルールは以下になります。</p>
+        <ul>
+            <li>P＞Qの場合、ポイント減少はPとQの差に{{ Constants.amplifier }}をかけた値、とQの和になります。</li>
+            <li>P≦Qの場合、ポイント減少はQのみとなります。</li>
+            <li>消費者のQの合計が生産量を上回った場合、停電が発生しポイントが{{ Constants.penalty }}減少します。</li>
+            <li>停電が発生した場合、入力したQによるポイント消費は行われません。</li>
+            <li>2ラウンド目以降、1つ前のラウンドからQを減少させる場合、ポイントを{{ Constants.regression_cost }}消費します。</li>
+        </ul>
+        <p>第{{ date }}日目の後の時間の気温予測は以下です。</p>
+        <ul>
+            <table class="table-condensed" style="width:500px; margin-top:20px;">
+                {% for forecast in forecast_list %}
+                    <tr>
+                        <td>{{ forecast.start_time }}時から{{ forecast.end_time }}時まで</td>
+                        <td>{{ forecast.value }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </ul>
+        <p>生産する電力量を入力してください。</p>
+    {% else %}
+        <p>第{{ date }}日目、{{ start_time }}時から{{ end_time }}時までの予想される電力総消費量は{{ weather_forecast }}です。</p>
+        <p>予想の誤差は正規分布に従います。</p>
+        <ul>
+            <li>±1の範囲に収束する確率は約38%</li>
+            <li>±2の範囲に収束する確率は約68%</li>
+            <li>±3の範囲に収束する確率は約87%</li>
+            <li>±4の範囲に収束する確率は約95%</li>
+            <li>±5の範囲に収束する確率は約99%</li>
+            <li>...</li>
+        </ul>
+        <p>需要が電力総生産量を上回った場合、停電が発生しポイントが{{ penalty_for_producer }}減少します。</p>
+        <p>電力量1を生産するのにポイントを1消費します。</p>
+        <p>消費する電力量を入力してください。</p>
+    {% endif %}
+
+    {% formfields %}
+
+    {% next_button %}
+
+{% endblock %}

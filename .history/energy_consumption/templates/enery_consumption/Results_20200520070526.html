@@ -1,0 +1,13 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block title %}
+    {{ player.role() == 'Consumer' ? '消費量の決定 | 消費者' : '生産量の決定 | 生産者' }}
+{% endblock %}
+
+{% block content %}
+
+    {% next_button %}
+{% endblock %}
+
+

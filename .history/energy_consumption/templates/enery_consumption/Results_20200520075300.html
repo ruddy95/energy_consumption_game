@@ -1,0 +1,39 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block title %}
+    {{ player.role() == 'Consumer' ? '結果 | 消費者' : '結果 | 生産者' }}
+{% endblock %}
+
+{% block content %}
+
+    <table class="table-condensed" style="width:500px; margin-top:20px;">
+        
+        <tr><td>生産・消費:</td><td></td></tr>
+        {% for p in group.get_players %}
+            <tr>
+                <td>{{ p.role() == 'Consumer' ? '消費者' : '生産者' }}</td>
+                <td>{{ p.role() == 'Consumer' ? p.consumption : p.production }}{% if p.id_in_group == player.id_in_group %}←あなた{% endif %}</td>
+            </tr>
+        {% endfor %}
+
+        {# 総消費 #}
+        {# 総生産 #}
+
+        <tr><td>Total contribution:</td><td>{{ group.total_contribution }}</td></tr>
+
+        <tr><td colspan="2"><hr/></td></tr>
+
+        <tr><td>Total earnings from the project:</td><td>{{ total_earnings }}</td></tr>
+        <tr><td>Your earnings from the project:</td><td>{{ group.individual_share }}</td></tr>
+
+        <tr><td colspan="2"><hr/></td></tr>
+
+        <tr><td>Thus in total you earned:</td><td>{{ player.payoff }}</td></tr>
+
+    </table>
+
+    {% next_button %}
+{% endblock %}
+
+
