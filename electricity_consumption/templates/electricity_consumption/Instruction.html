@@ -43,9 +43,9 @@
     <br>
     <p>電気料金は変動します。これは生産者が決定するのですが、生産者はこの料金を操作することでできるだけ電力の使用量を一定に保つことを目指します。</p>
     <p>電気料金は{{ Constants.repeat_span }}ターンに一回、それぞれピークとオフピーク時の2種類の価格を決定できます。</p>
-    <p>この電気料金は{{ Constants.minimum_price }}kW以上で整数の範囲で自由に設定でき、総使用量を34~45kWに収めることができるとボーナスとして{{ Constants.consumption_bonus }}獲得できます。逆に34〜49kWに収めることができなければペナルティとして{{ Constants.consumption_penalty }}が課されます。</p>
+    <p>この電気料金は{{ Constants.minimum_price }}kW以上で整数の範囲で自由に設定でき、総使用量を34~45kWに収めることができるとボーナスとして{{ Constants.consumption_bonus }}獲得できます。逆に30〜49kWに収めることができなければペナルティとして{{ Constants.consumption_penalty }}が課されます。</p>
     <br>
-    <p>また生産者はこの総使用量に応じた収益も得ることができ、1kWにつき{{ Constants.profit_per_kw }}獲得できます。すなわち、総使用量が40kWだった場合収益としての600ポイントとボーナスの{{ Constants.consumption_bonus }}で合計2600ポイント獲得でき、50kwだった場合、収益として750ポイントとペナルティとしての{{ Constants.consumption_penalty }}を合算して250ポイント獲得できます。</p>
+    <p>また生産者はこの総使用量に応じた収益も得ることができ、1kWにつき{{ Constants.profit_per_kw }}獲得できます。すなわち、総使用量が40kWだった場合収益としての400ポイントとボーナスの{{ Constants.consumption_bonus }}で合計1400ポイント獲得でき、50kwだった場合、収益として500ポイントとペナルティとしての{{ Constants.consumption_penalty }}を合算して0ポイント獲得できます。</p>
     <br>
     <p>以上をまとめると総電力消費量によるポイント収支は表のようになります。</p>
     <table class="table-bordered" style="width:900px; margin-top:20px;">
@@ -74,7 +74,7 @@
             <td>-</td>
         </tr>
         <tr>
-            <td>34~46</td>
+            <td>34~45</td>
             <td>電気料金 x 使用量</td>
             <td>-</td>
             <td>電気料金 x Σ使用量</td>
@@ -82,7 +82,7 @@
             <td>-</td>
         </tr>
         <tr>
-            <td>47~49</td>
+            <td>46~49</td>
             <td>電気料金 x 使用量</td>
             <td>{{ Constants.blackout_penalty }}</td>
             <td>電気料金 x Σ使用量</td>

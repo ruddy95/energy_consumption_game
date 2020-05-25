@@ -22,9 +22,9 @@ Your app description
 class Constants(BaseConstants):
     name_in_url = 'electricity_consumption'
     players_per_group = 4
-    num_rounds = 4
+    num_rounds = 15
 
-    repeat_span = 2
+    repeat_span = 5
     peak_mean_base = 13
     offpeak_mean_base = 7
     alpha_base = 2100

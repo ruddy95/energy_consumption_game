@@ -108,7 +108,7 @@ SESSION_CONFIGS = [
     # ),
     dict(
         name='electricity_consumption',
-        num_demo_participants=8,
+        num_demo_participants=12,
         app_sequence=['electricity_consumption', 'payment_info']
     )
 ]
