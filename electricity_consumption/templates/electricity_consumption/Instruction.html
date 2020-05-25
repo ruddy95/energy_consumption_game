@@ -1,0 +1,126 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block title %}
+    ルール説明
+{% endblock %}
+
+{% block content %}
+    <p>プレイヤーは生産者と消費者に分かれ、それぞれ電力の生産と消費を行います。</p>
+    <p>このゲームは全{{ Constants.num_rounds }}ターンからなり、それぞれのターンでプレイヤーは意思決定を行います。生産者と消費者は以下のように行動します。</p>
+    <ul>
+        <li>生産者は電気料金を操作して、総消費電力量を一定範囲に収めることを目指す</li>
+        <li>消費者は消費によって得られるポイントを最大限稼ぐことを目指す</li>
+    </ul>
+    <p>以降このルールについて詳細に説明します。</p>
+    <div style="margin:24px auto;width:76%;">
+        <img style="width: 100%;" src="{% static 'electricity_consumption/cycle.png' %}">
+    </div>
+    <p>季節は真夏。人々は暑さをしのぐため冷房を使用します。もちろん真夏といえども朝方は涼しいなんてこともありますから、冷房の設定は時間帯によって変えるものだと思います。電気代もかかりますし。</p>
+    <p>ゲームでは簡単のため、電力消費は冷房の稼働によってのみ行われるという仮定をおきます。電力を消費する、つまり冷房を利用することで消費者はポイントを得ることができますが、どれだけ電力を消費すればどれだけのポイントが得られるかは毎ターン変化します。ターンによって与えられる効用関数が変化するものだと考えてください。ターン $i$ における効用関数 $U(x)$ は以下です。</p>
+    \[
+        U(x) = \alpha\times\frac{1}{1+\mathrm{e}^{-(x-a_{i})}} \\
+        a_{i} \in \{A \mid A \in \mathbb{R}, A>0\} (i = 1,2,...,{{ Constants.num_rounds }})
+    \]
+    <div style="margin:0 auto 24px;width:45%;">
+        <img style="width: 100%;" src="{% static 'electricity_consumption/sigmoid.png' %}">
+    </div>
+    <p>グラフは $a_{i} = 16, \alpha = {{ Constants.alpha_base }}$ の時です。</p>
+    <p>$a_{i}$ は気温のようなものでピーク時は{{ Constants.peak_mean_base }}近辺の値を、オフピーク時は{{ Constants.offpeak_mean_base }}近辺の値をとり、誤差は標準正規分布に従います。</p>
+    <p>暑い時は $a_{i}$ が大きく、涼しい時は小さいと考えるとイメージしやすいです。</p>
+    <p>ピーク平均{{ Constants.peak_mean_base }}やオフピーク平均{{ Constants.offpeak_mean_base }}という値は{{ Constants.repeat_span }}ターン毎に微変動し、効用関数に反映されるので確認してください。</p>
+    <p>$\alpha$ は{{ Constants.repeat_span }}ターンごとに変動する値で、平均 $\mu={{ Constants.alpha_base }},$ 分散 $\sigma={{ Constants.alpha_amplifier }}$ の正規分布に従います。</p>
+    <br>
+    <p>もちろん電気を使えばその分の対価は支払う必要があります。つまり先程の効用関数 $U(x)$ から電気代を引いた値がそのターンにおけるポイント収支 $P(x)$ となります。例えば $a_{i} = 16, \alpha = {{ Constants.alpha_base }},$ 電気料金 $c=90(¥/kW)$ の時、 $P(x)$ は以下のようになります。</p>
+    \[
+        P(x) = \alpha\times\frac{1}{1+\mathrm{e}^{-(x-16)}} - 90 \times x
+    \]
+    <div style="margin:0 auto 24px;width:45%;">
+        <img style="width: 100%;" src="{% static 'electricity_consumption/price_curve.png' %}">
+    </div>
+    <p>電気料金は{{ Constants.repeat_span }}ターンごとにまとめて請求されます。</p>
+    <p>１点、<mark>消費者全体の需要量が{{ Constants.blackout_criteria }}kW以上になると停電が起き、消費者それぞれに{{ Constants.blackout_penalty }}が課せられる</mark>のでご注意ください。</p>
+    <br>
+    <p>電気料金は変動します。これは生産者が決定するのですが、生産者はこの料金を操作することでできるだけ電力の使用量を一定に保つことを目指します。</p>
+    <p>電気料金は{{ Constants.repeat_span }}ターンに一回、それぞれピークとオフピーク時の2種類の価格を決定できます。</p>
+    <p>この電気料金は{{ Constants.minimum_price }}kW以上で整数の範囲で自由に設定でき、総使用量を34~45kWに収めることができるとボーナスとして{{ Constants.consumption_bonus }}獲得できます。逆に34〜49kWに収めることができなければペナルティとして{{ Constants.consumption_penalty }}が課されます。</p>
+    <br>
+    <p>また生産者はこの総使用量に応じた収益も得ることができ、1kWにつき{{ Constants.profit_per_kw }}獲得できます。すなわち、総使用量が40kWだった場合収益としての600ポイントとボーナスの{{ Constants.consumption_bonus }}で合計2600ポイント獲得でき、50kwだった場合、収益として750ポイントとペナルティとしての{{ Constants.consumption_penalty }}を合算して250ポイント獲得できます。</p>
+    <br>
+    <p>以上をまとめると総電力消費量によるポイント収支は表のようになります。</p>
+    <table class="table-bordered" style="width:900px; margin-top:20px;">
+        <tr>
+            <th>総需要(消費)量(単位:kW)</th>
+            <th>消費者支払(5ターン毎)</th>
+            <th>停電ペナルティ</th>
+            <th>生産者利益</th>
+            <th>生産者ボーナス</th>
+            <th>生産者ペナルティ</th>
+        </tr>
+        <tr>
+            <td>~29</td>
+            <td>電気料金 x 使用量</td>
+            <td>-</td>
+            <td>電気料金 x Σ使用量</td>
+            <td>-</td>
+            <td>{{ Constants.consumption_penalty }}</td>
+        </tr>
+        <tr>
+            <td>30~33</td>
+            <td>電気料金 x 使用量</td>
+            <td>-</td>
+            <td>電気料金 x Σ使用量</td>
+            <td>-</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td>34~46</td>
+            <td>電気料金 x 使用量</td>
+            <td>-</td>
+            <td>電気料金 x Σ使用量</td>
+            <td>{{ Constants.consumption_bonus }}</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td>47~49</td>
+            <td>電気料金 x 使用量</td>
+            <td>{{ Constants.blackout_penalty }}</td>
+            <td>電気料金 x Σ使用量</td>
+            <td>-</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td>50~</td>
+            <td>電気料金 x 使用量</td>
+            <td>{{ Constants.blackout_penalty }}</td>
+            <td>電気料金 x Σ使用量</td>
+            <td>-</td>
+            <td>{{ Constants.consumption_penalty }}</td>
+        </tr>
+    </table>
+    <br>
+    <br>
+    {% next_button %}
+{% endblock %}
+
+{% block app_scripts %}
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    TeX: { equationNumbers: { autoNumber: "AMS" }},
+    tex2jax: {
+    inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+    processEscapes: true
+    },
+    "HTML-CSS": { matchFontHeight: false },
+});
+</script>
+{% endblock %}
+
+{% block app_styles %}
+<style>
+    td, th {
+        text-align: center;
+    }
+</style>
+{% endblock %}

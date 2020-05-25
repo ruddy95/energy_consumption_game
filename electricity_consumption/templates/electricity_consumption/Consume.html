@@ -1,0 +1,49 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block title %}
+    消費量決定
+{% endblock %}
+
+{% block content %}
+    <h3>ターン{{ subsession.round_number }}/{{ Constants.num_rounds }}</h3>
+    <p>ターン{{ subsession.round_number }}は{% if subsession.is_peak %}ピーク{% else %}オフピーク{% endif %}時で、 $a_{i}={{ subsession.utility_slider }}, \alpha={{ subsession.alpha }}$ 、電気料金は¥{{ group.pricing }}/kWです。</p>
+    <p>ターン{{ subsession.round_number }}を含む{{ Constants.repeat_span }}ターン分の電気料金は、最後にまとめて請求されます。</p>
+    <p><mark>消費者全体の需要量が{{ Constants.blackout_criteria }}kW以上になると停電が起き、消費者それぞれに{{ Constants.blackout_penalty }}が課せられる</mark>のでご注意ください。</p>
+    {% formfield player.consumption label="電気消費量を0以上の整数で入力してください。" %}
+
+    {% next_button %}
+
+    <h4>参考</h4>
+    \[
+        p(x) = {{ subsession.alpha }}\times\frac{1}{1+\mathrm{e}^{-(x-{{ subsession.utility_slider }})}} - {{ group.pricing }} \times x
+    \]
+    <table class="table-bordered" style="width:600px; margin-top:20px;">
+        <tr>
+            <td>x</td>
+            {% for x in x_range %}
+            <td>{{ x }}</td>
+            {% endfor %}
+        </tr>
+        <tr>
+            <td>p</td>
+            {% for p in calculated_points %}
+            <td>{{ p }}</td>
+            {% endfor %}
+        </tr>
+    </table>
+{% endblock %}
+
+{% block app_scripts %}
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    TeX: { equationNumbers: { autoNumber: "AMS" }},
+    tex2jax: {
+    inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+    processEscapes: true
+    },
+    "HTML-CSS": { matchFontHeight: false },
+});
+</script>
+{% endblock %}

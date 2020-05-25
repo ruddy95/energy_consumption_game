@@ -4,9 +4,6 @@ from .models import Constants
 
 
 class PaymentInfo(Page):
-    def vars_for_template(self):
-        return dict(
-            payoff=self.participant.vars['payoff']
-        )
+    pass
 
 page_sequence = [PaymentInfo]

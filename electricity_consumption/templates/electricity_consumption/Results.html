@@ -1,0 +1,69 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block title %}
+    結果
+{% endblock %}
+
+{% block content %}
+    <table class="table-condensed" style="width:500px; margin-top:20px;">
+        <tr><td>消費電力量:</td><td></td></tr>
+        {% for p in group.get_players %}
+            {% if p.role == 'Consumer' %}
+            <tr>
+                <td></td>
+                <td>{{ p.consumption }}</td>
+            </tr>
+            {% endif %}
+        {% endfor %}
+        <tr>
+            <td>総電力消費量:</td>
+            <td>{{ group.total_consumption }}</td>
+        </tr>
+        <tr>
+            <td>電力状況:</td>
+            <td>{% if group.is_blackout %}停電発生{% else %}異常なし{% endif %}</td>
+        </tr>
+        <tr><td colspan="2"><hr/></td></tr>
+        <tr>
+            <td>このターンのポイント収支:</td>
+            <td>{{ player.payoff }}</td>
+        </tr>
+        <tr><td colspan="2"><hr/></td></tr>
+        <tr><td>現在のポイント:</td><td>{{ participant.payoff }}</td></tr>
+    </table>
+    {% next_button %}
+
+    <h4>ポイント計算</h4>
+    \[
+        P(x) = {{ subsession.alpha }}\times\frac{1}{1+\mathrm{e}^{-(x-{{ subsession.utility_slider }})}} - {{ group.pricing }} \times x \\
+    \]
+    <table class="table-bordered" style="width:600px; margin-top:20px;">
+        <tr>
+            <td>x</td>
+            {% for x in x_range %}
+            <td>{{ x }}</td>
+            {% endfor %}
+        </tr>
+        <tr>
+            <td>p</td>
+            {% for p in calculated_points %}
+            <td>{{ p }}</td>
+            {% endfor %}
+        </tr>
+    </table>
+{% endblock %}
+
+{% block app_scripts %}
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    TeX: { equationNumbers: { autoNumber: "AMS" }},
+    tex2jax: {
+    inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+    processEscapes: true
+    },
+    "HTML-CSS": { matchFontHeight: false },
+});
+</script>
+{% endblock %}

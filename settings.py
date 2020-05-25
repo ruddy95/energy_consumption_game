@@ -9,8 +9,85 @@ SESSION_CONFIG_DEFAULTS = dict(
     real_world_currency_per_point=1.00, participation_fee=0.00, doc=""
 )
 
-
 SESSION_CONFIGS = [
+    # dict(
+    #     name='bargaining',
+    #     display_name="bargaining",
+    #     num_demo_participants=2,
+    #     app_sequence=['bargaining'],
+    # ),
+    # dict(
+    #     name='bertrand',
+    #     display_name="bertrand",
+    #     num_demo_participants=2,
+    #     app_sequence=['bertrand'],
+    # ),
+    # dict(
+    #     name='common_value_auction',
+    #     display_name="common_value_auction",
+    #     num_demo_participants=2,
+    #     app_sequence=['common_value_auction'],
+    # ),
+    # dict(
+    #     name='cournot',
+    #     display_name="cournot",
+    #     num_demo_participants=2,
+    #     app_sequence=['cournot'],
+    # ),
+    # dict(
+    #     name='dictator',
+    #     display_name="dictator",
+    #     num_demo_participants=2,
+    #     app_sequence=['dictator'],
+    # ),
+    # dict(
+    #     name='guess_two_thirds',
+    #     display_name="guess_two_thirds",
+    #     num_demo_participants=3,
+    #     app_sequence=['guess_two_thirds'],
+    # ),
+    # dict(
+    #     name='matching_pennies',
+    #     display_name="matching_pennies",
+    #     num_demo_participants=2,
+    #     app_sequence=['matching_pennies'],
+    # ),
+    # dict(
+    #     name='prisoner',
+    #     display_name="prisoner",
+    #     num_demo_participants=2,
+    #     app_sequence=['prisoner'],
+    # ),
+    # dict(
+    #     name='public_goods',
+    #     display_name="public_goods",
+    #     num_demo_participants=3,
+    #     app_sequence=['public_goods'],
+    # ),
+    # dict(
+    #     name='survey',
+    #     display_name="survey",
+    #     num_demo_participants=2,
+    #     app_sequence=['survey'],
+    # ),
+    # dict(
+    #     name='volunteer_dilemma',
+    #     display_name="volunteer_dilemma",
+    #     num_demo_participants=3,
+    #     app_sequence=['volunteer_dilemma'],
+    # ),
+    # dict(
+    #     name='trust',
+    #     display_name="trust",
+    #     num_demo_participants=2,
+    #     app_sequence=['trust'],
+    # ),
+    # dict(
+    #     name='traveler_dilemma',
+    #     display_name="traveler_dilemma",
+    #     num_demo_participants=2,
+    #     app_sequence=['traveler_dilemma'],
+    # ),
     # dict(
     #     name='public_goods',
     #     display_name="Public Goods",
@@ -30,9 +107,9 @@ SESSION_CONFIGS = [
     #     app_sequence=['survey', 'payment_info'],
     # ),
     dict(
-        name='energy_consumption',
-        num_demo_participants=4,
-        app_sequence=['intro', 'energy_consumption', 'intro2', 'energy_consumption_with_cpp', 'payment_info']
+        name='electricity_consumption',
+        num_demo_participants=8,
+        app_sequence=['electricity_consumption', 'payment_info']
     )
 ]
 
